@@ -1,0 +1,47 @@
+openapi: 3.0.0
+info:
+  title: Pet Shelter API
+  version: 1.0.0
+  description: Документація API для курсової роботи
+  contact:
+    name: Backend Developer
+servers:
+  - url: http://localhost:5000
+    description: Local server
+
+components:
+  schemas:
+    Animal:
+      type: object
+      required:
+        - name
+        - species
+      properties:
+        id:
+          type: integer
+          description: Унікальний ID
+        name:
+          type: string
+          description: Кличка
+        species:
+          type: string
+          description: Вид (CAT, DOG)
+      example:
+        id: 1
+        name: Murzik
+        species: CAT
+
+paths:
+  /api/animals:
+    get:
+      summary: Отримати список всіх тварин
+      tags: [Animals]
+      responses:
+        200:
+          description: Успішно отримано список
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Animal"
