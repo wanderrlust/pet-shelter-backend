@@ -45,3 +45,28 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Animal"
+    post:
+      summary: Додати нову тварину
+      tags: [Animals]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - species
+              properties:
+                name:
+                  type: string
+                species:
+                  type: string
+                  enum: [CAT, DOG, OTHER]
+                breed:
+                  type: string
+                age:
+                  type: integer
+      responses:
+        201:
+          description: Тварину успішно створено

@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  ADOPTER
+}
+
+enum Species {
+  CAT
+  DOG
+  OTHER
+}
+
+enum AnimalStatus {
+  AVAILABLE
+  PENDING
+  ADOPTED
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// --- Моделі ---
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  password     String
+  role         Role     @default(ADOPTER)
+  firstName    String?
+  lastName     String?
+  phone        String?
+  createdAt    DateTime @default(now())
+
+  // Зв'язки
+  applications AdoptionApplication[]
+  refreshTokens RefreshToken[]
+  notifications Notification[]
+}
+
+model Animal {
+  id          Int      @id @default(autoincrement())
+  name        String
+  species     Species
+  breed       String?
+  age         Int?
+  description String?  @db.Text
+  imageUrl    String?
+  status      AnimalStatus @default(AVAILABLE)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Зв'язки
+  applications AdoptionApplication[]
+  medicalRecords MedicalRecord[]
+}
+
+model AdoptionApplication {
+  id        Int      @id @default(autoincrement())
+  status    ApplicationStatus @default(PENDING)
+  message   String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Зовнішні ключі
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  
+  animalId  Int
+  animal    Animal   @relation(fields: [animalId], references: [id])
+}
+
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model MedicalRecord {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?  @db.Text
+  date        DateTime @default(now())
+
+  animalId    Int
+  animal      Animal   @relation(fields: [animalId], references: [id])
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+}
