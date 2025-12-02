@@ -30,8 +30,67 @@ components:
         id: 1
         name: Murzik
         species: CAT
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
 
 paths:
+  /api/auth/register:
+    post:
+      summary: Реєстрація нового користувача
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+      responses:
+        201:
+          description: Користувача успішно створено
+
+  /api/auth/login:
+    post:
+      summary: Вхід у систему (Отримання токена)
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  default: user@example.com
+                password:
+                  type: string
+                  format: password
+                  default: password123
+      responses:
+        200:
+          description: Успішний вхід. Повертає JWT токен.
+
   /api/animals:
     get:
       summary: Отримати список всіх тварин
@@ -48,6 +107,8 @@ paths:
     post:
       summary: Додати нову тварину
       tags: [Animals]
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
