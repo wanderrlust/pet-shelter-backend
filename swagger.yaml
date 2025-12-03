@@ -131,3 +131,38 @@ paths:
       responses:
         201:
           description: Тварину успішно створено
+  /api/applications:
+    post:
+      summary: Подати заявку на усиновлення (Спрацьовує черга)
+      tags: [Applications]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - animalId
+                - message
+              properties:
+                animalId:
+                  type: integer
+                  example: 1
+                message:
+                  type: string
+                  example: "Я хочу забрати цього котика, бо він схожий на мене."
+      responses:
+        201:
+          description: Заявку прийнято
+
+  /api/applications/my:
+    get:
+      summary: Мої заявки
+      tags: [Applications]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Список заявок
